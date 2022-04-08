@@ -8,6 +8,7 @@ package fr.insalyon.dasi.metier.service;
 import java.util.*;
 import fr.insalyon.dasi.dao.ClientDao;
 import fr.insalyon.dasi.dao.EmployeDao;
+import fr.insalyon.dasi.dao.InterventionDao;
 import fr.insalyon.dasi.dao.JpaUtil;
 import fr.insalyon.dasi.metier.modele.Client;
 import fr.insalyon.dasi.metier.modele.Employe;
@@ -28,6 +29,7 @@ public class Service {
 
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
+    protected InterventionDao interventionDao = new InterventionDao();
 
     public Long inscrireClient(Client client) {
 
@@ -59,13 +61,13 @@ public class Service {
         }
         return resultat;
     }
-    
+
     public Client rechercherClientParId(Long unId) {
         Client c = null;
         JpaUtil.creerContextePersistance();
         try {
             c = clientDao.rechercheClient(unId);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace(System.out);
             c = null;
         } finally {
@@ -73,24 +75,42 @@ public class Service {
         }
         return c;
     }
-    
-    public Employe demanderIntervention(Client client, Intervention intervention) {
-        intervention.setDateDemande(Date.from(Instant.now()));
-        List<Employe> listeEmp = employeDao.getListeEmployeEntreHoraire(LocalTime.now());
-        String mess;
+
+    public Employe demanderIntervention(Client client, Intervention intervention) throws Exception {
+        JpaUtil.creerContextePersistance();
+        Date instantCourant = new Date();
+        List<Employe> listeEmp = employeDao.getListeEmployeEntreHoraire(instantCourant);
+        System.out.println(listeEmp);
         Employe res = null;
-        if (listeEmp == null) {
-            mess = "Il n'y a pas d'employé maintenant.";
-            System.out.println(mess);
-            intervention.setStatut(Statut.REJET);
-        } else {
+        try {
+            
             res = listeEmp.get(0);
             intervention.setEmp(listeEmp.get(0));
             intervention.setClient(client);
+            String corps = "Bonjour " + res.getPrenom() + ". Merci de prendre en charge l'intervention " + intervention.toString()
+                    + "demander à " + intervention.getDateDemande() + "par "
+                    + intervention.getClient().getPrenom() + " " + intervention.getClient().getNom() + " " + intervention.getClient().getAddPostal() + ".";
+
+            Message.envoyerNotification(res.getNumTel(), corps);
+            
+            
+        } catch (Exception ex) {
+            
+            String corps = "Bonjour " + client.getPrenom() + ", votre demande d'intervention du " + intervention.getDateDemande() + " a été rejeté par manque de personnel disponible. "
+                    + "Merci de recommencer ultérieurement. Veuillez nous excuser pour la gêne occasionée. ";
+
+            Message.envoyerMail("contact@react.if", client.getMail(), "Rejet de demande d'intervention", corps);
+            intervention.setStatut(Statut.REJET);
+        } finally {
+            JpaUtil.ouvrirTransaction();
+            interventionDao.creer(intervention);
+            JpaUtil.validerTransaction();
+            JpaUtil.fermerContextePersistance();
         }
+
         return res;
     }
-    
+
     public void cloturerIntervention(Intervention intervention, Statut unStatut, Date dateDeCloture, String cmt) {
         if (intervention.getStatut() == null) {
             intervention.setStatut(unStatut);
@@ -109,5 +129,5 @@ public class Service {
             }
         }
     }
-    
+
 }

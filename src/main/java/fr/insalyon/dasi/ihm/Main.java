@@ -22,13 +22,13 @@ import java.util.Date;
  */
 public class Main {
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, Exception {
         JpaUtil.init();
-        //testInscriptionClient();
+        testInscriptionClient();
+        testCreerAgence();
         testInitialiserEmp();
-        //testCreerAgence();
         //testRechercheClient();
-        //testDemanderIntervention();
+        testDemanderIntervention();
         JpaUtil.destroy();
     }
 
@@ -69,9 +69,9 @@ public class Main {
             Agence a = JpaUtil.obtenirContextePersistance().find(Agence.class, Long.valueOf(51));
             JpaUtil.ouvrirTransaction();
             date = "08/08/1995";
-            Employe e1 = new Employe("111", sdf1.parse("00:00:00"), sdf1.parse("08:00:00"), a,
+            Employe e1 = new Employe("111", sdf1.parse("00:00:00"), sdf1.parse("23:00:00"), a,
                     "PAIR", "Benoît", "benoit.pair@reactif.fr", "06 79 89 06 99", sdf.parse(date));
-            Employe e2 = new Employe("222", sdf1.parse("01:00:00"), sdf1.parse("07:00:00"), a,
+            Employe e2 = new Employe("222", sdf1.parse("01:00:00"), sdf1.parse("13:00:00"), a,
                     "FOLTÊTE", "Emile", "emile.foltete@reactif.fr", "06 79 74 09 99", sdf.parse(date));
             JpaUtil.obtenirContextePersistance().persist(e1);
             JpaUtil.obtenirContextePersistance().persist(e2);
@@ -99,16 +99,17 @@ public class Main {
         System.out.println();
     }
 
-    public static void testDemanderIntervention() throws ParseException {
+    public static void testDemanderIntervention() throws ParseException, Exception {
         Service service = new Service();
         Client minh = service.rechercherClientParId(Long.valueOf(1));
+        Date instant = new Date();
+        Livraison livraison = new Livraison("Bracelet", "COAI", "Livraison, svp", instant, minh);
         
-        Instant instant = Instant.now();
-        Date oldfashionedDateObject = Date.from(instant);
-        Livraison livraison = new Livraison("Bracelet", "COAI", "Livraison, svp", oldfashionedDateObject, minh);
         Employe e = service.demanderIntervention(minh, livraison);
         if (e == null) {
             System.out.println("Veuillez demander ultérieurement.");
         }
     }
+    
+    
 }

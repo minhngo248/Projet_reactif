@@ -36,9 +36,9 @@ public abstract class Intervention implements Serializable {
     private Date dateDeCloture;
     private String commentaire;
     private Statut statut;
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne
     Employe emp;
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne
     Client client;
 
     public Intervention() {
@@ -51,6 +51,8 @@ public abstract class Intervention implements Serializable {
         this.dateDemande = dateDemande;
         this.client = client;
         this.statut = null;
+        this.commentaire = null;
+        this.dateDeCloture = null;
     }
 
     public Statut getStatut() {

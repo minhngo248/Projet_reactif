@@ -22,11 +22,12 @@ public class EmployeDao {
         em.persist(em);
     }
     
-    public List<Employe> getListeEmployeEntreHoraire(LocalTime heureDemande) {
+    public List<Employe> getListeEmployeEntreHoraire(Date heureDemande) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
-        TypedQuery<Employe> query = em.createQuery("Select e From Employe e where e.HoraireDebut <= :heureDemande and :heureDemande <= e.HoraireFin", 
+        TypedQuery<Employe> query = em.createQuery("Select e From Employe e where e.horaireDebut <= :heureDemande and e.horaireFin > :heureDemande", 
                 Employe.class);
         query.setParameter("heureDemande", heureDemande);
-        return query.getResultList();
+        List<Employe> resultat = query.getResultList();
+        return resultat;
     }
 }

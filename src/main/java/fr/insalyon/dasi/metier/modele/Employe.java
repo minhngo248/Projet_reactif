@@ -24,10 +24,10 @@ public class Employe extends Personne {
 
     private String mdp;
     
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIME)
     private Date horaireDebut;
     
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIME)
     private Date horaireFin;
     
     @ManyToOne
@@ -53,6 +53,38 @@ public class Employe extends Personne {
 
     public void setMdp(String mdp) {
         this.mdp = mdp;
+    }
+
+    public Date getHoraireDebut() {
+        return horaireDebut;
+    }
+
+    public void setHoraireDebut(Date horaireDebut) {
+        this.horaireDebut = horaireDebut;
+    }
+
+    public Date getHoraireFin() {
+        return horaireFin;
+    }
+
+    public void setHoraireFin(Date horaireFin) {
+        this.horaireFin = horaireFin;
+    }
+
+    public Agence getAgence() {
+        return agence;
+    }
+
+    public void setAgence(Agence agence) {
+        this.agence = agence;
+    }
+
+    public List<Intervention> getListeIntervention() {
+        return listeIntervention;
+    }
+
+    public void setListeIntervention(List<Intervention> listeIntervention) {
+        this.listeIntervention = listeIntervention;
     }
 
 }

@@ -56,4 +56,12 @@ public class Client extends Personne {
         this.longitude = latLng.lng;
     }
 
+    public List<Intervention> getHistorique() {
+        return historique;
+    }
+    
+    public void addIntervention(Intervention intervention){
+        historique.add(intervention);
+    }
+
 }

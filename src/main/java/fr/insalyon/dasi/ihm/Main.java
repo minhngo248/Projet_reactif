@@ -9,12 +9,15 @@ import fr.insalyon.dasi.dao.JpaUtil;
 import fr.insalyon.dasi.metier.modele.Agence;
 import fr.insalyon.dasi.metier.modele.Client;
 import fr.insalyon.dasi.metier.modele.Employe;
+import fr.insalyon.dasi.metier.modele.Incident;
+import fr.insalyon.dasi.metier.modele.Intervention;
 import fr.insalyon.dasi.metier.modele.Livraison;
+import fr.insalyon.dasi.metier.modele.Statut;
 import fr.insalyon.dasi.metier.service.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -29,6 +32,7 @@ public class Main {
         testInitialiserEmp();
         //testRechercheClient();
         testDemanderIntervention();
+        testerConsulterHistoriqueDemandeIntervention();
         JpaUtil.destroy();
     }
 
@@ -83,12 +87,12 @@ public class Main {
             JpaUtil.fermerContextePersistance();
         }
     }
-    
+
     public static void testRechercheClient() {
         System.out.println();
         System.out.println("**** testerRechercheClient() ****");
-        System.out.println();     
-        
+        System.out.println();
+
         Service service = new Service();
         Client client = service.rechercherClientParId(Long.valueOf(2));
         if (client != null) {
@@ -104,12 +108,52 @@ public class Main {
         Client minh = service.rechercherClientParId(Long.valueOf(1));
         Date instant = new Date();
         Livraison livraison = new Livraison("Bracelet", "COAI", "Livraison, svp", instant, minh);
-        
+
         Employe e = service.demanderIntervention(minh, livraison);
         if (e == null) {
             System.out.println("Veuillez demander ultérieurement.");
+        } else {
+            System.out.println("Cloturation intervention");
+            String cmt = "Votre canapé vous attends dans votre salon. J'ai déposé le bon de livraison sur la table de cusine. Cordialement Camille.";
+            Date dateDeCloture = new Date();
+            service.cloturerIntervention(livraison, Statut.SUCCES, dateDeCloture, cmt);
         }
+
     }
-    
-    
+    public static void testerConsulterHistoriqueDemandeIntervention(){
+        Service service = new Service();
+        Client minh = service.rechercherClientParId(Long.valueOf(1));
+        minh.getHistorique().size();
+        System.out.println(minh.getHistorique());
+    }
+    /*public static void testerConsulterHistoriqueDemandeIntervention() throws ParseException, Exception {
+        System.out.println();
+        System.out.println("**** testerConsulterHistoriqueDemandeIntervention() ****");
+        System.out.println();
+
+        Service service = new Service();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String dt = "01/06/2001";
+        Client minh = new Client("Minh", "NGO", "minh.ngo@insa-lyon.fr", "123AZE", "10 avenue Albert Einstein 69100 Villeurbanne", "123456789", sdf.parse(dt));
+        Long idMinh = minh.getId();
+         Date instant = new Date();
+        Livraison livraison = new Livraison("Canapé", "HGR", "Livraison, svp", instant, minh);
+         Date inst = new Date();
+        Incident incident = new Incident("Fuite d'eau", inst, minh);
+        
+        service.demanderIntervention(minh, incident);
+        service.demanderIntervention(minh,livraison);
+        
+        List<Intervention> historique = service.ConsulterHistoriqueDemandeIntervention(idMinh);
+        System.out.println("*** Liste des interventions");
+        if (historique != null) {
+            for (Intervention i : historique) {
+                System.out.println(i);
+            }
+        } else {
+            System.out.println("=> ERREUR...");
+        }
+        System.out.println();
+    }*/
+
 }

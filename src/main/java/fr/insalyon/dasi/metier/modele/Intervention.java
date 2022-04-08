@@ -36,9 +36,9 @@ public abstract class Intervention implements Serializable {
     private Date dateDeCloture;
     private String commentaire;
     private Statut statut;
-    @ManyToOne
+    @ManyToOne 
     Employe emp;
-    @ManyToOne
+    @ManyToOne 
     Client client;
 
     public Intervention() {
@@ -101,6 +101,11 @@ public abstract class Intervention implements Serializable {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    @Override
+    public String toString() {
+        return "Intervention{" + "description=" + description + ", dateDemande=" + dateDemande + ", dateDeCloture=" + dateDeCloture + ", commentaire=" + commentaire + ", statut=" + statut + ", emp=" + emp + '}';
     }
     
     

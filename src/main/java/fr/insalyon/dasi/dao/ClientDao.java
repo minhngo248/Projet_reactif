@@ -6,6 +6,7 @@
 package fr.insalyon.dasi.dao;
 
 import fr.insalyon.dasi.metier.modele.Client;
+import fr.insalyon.dasi.metier.modele.Intervention;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -18,6 +19,10 @@ public class ClientDao {
     public void creer(Client client) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         em.persist(client);
+    }
+    public void modifier(Client client) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+        em.merge(client);
     }
     
     public Client rechercheClient(Long unId) {
@@ -48,5 +53,14 @@ public class ClientDao {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         Client client = em.find(Client.class, unId);
         em.remove(client);
+    }
+    
+    public List<Intervention> listerDemandeIntervention(Long idClient) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+        TypedQuery<Intervention> query;
+        query = em.createQuery("SELECT i FROM Intervention i WHERE i.client_id= :id",
+                Intervention.class);
+        query.setParameter("id", idClient);
+        return query.getResultList();
     }
 }

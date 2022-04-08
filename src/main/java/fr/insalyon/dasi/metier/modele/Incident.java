@@ -5,6 +5,7 @@
  */
 package fr.insalyon.dasi.metier.modele;
 
+import java.util.Date;
 import javax.persistence.Entity;
 
 /**
@@ -13,5 +14,12 @@ import javax.persistence.Entity;
  */
 @Entity
 public class Incident extends Intervention {
+
+    public Incident() {
+    }
+
+    public Incident(String description, Date dateDemande, Client client) {
+        super(description, dateDemande, client);
+    }
     
 }

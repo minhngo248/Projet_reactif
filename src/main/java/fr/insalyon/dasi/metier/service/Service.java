@@ -11,13 +11,10 @@ import fr.insalyon.dasi.dao.EmployeDao;
 import fr.insalyon.dasi.dao.InterventionDao;
 import fr.insalyon.dasi.dao.JpaUtil;
 import fr.insalyon.dasi.metier.modele.Client;
+import fr.insalyon.dasi.metier.modele.Dispo;
 import fr.insalyon.dasi.metier.modele.Employe;
 import fr.insalyon.dasi.metier.modele.Intervention;
 import fr.insalyon.dasi.metier.modele.Statut;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalTime;
-import org.joda.time.LocalDate;
 import util.GeoNetApi;
 import util.Message;
 
@@ -80,22 +77,54 @@ public class Service {
         JpaUtil.creerContextePersistance();
         Date instantCourant = new Date();
         List<Employe> listeEmp = employeDao.getListeEmployeEntreHoraire(instantCourant);
-        System.out.println(listeEmp);
         Employe res = null;
+        for (int i = 0; i < listeEmp.size(); ++i) {
+            Employe e = listeEmp.get(i);
+            if (e.getDispo() == Dispo.LIBRE) {
+                try {
+                    e.setDispo(Dispo.OCCUPE);
+                    res = e;
+                    intervention.setEmp(e);
+
+                    intervention.setClient(client);
+                    String corps = "Bonjour " + res.getPrenom() + ". Merci de prendre en charge l'intervention " + intervention.toString()
+                            + "demander à " + intervention.getDateDemande() + "par "
+                            + intervention.getClient().getPrenom() + " " + intervention.getClient().getNom() + " " + intervention.getClient().getAddPostal() + ".";
+
+                    Message.envoyerNotification(res.getNumTel(), corps);
+
+                } catch (Exception ex) {
+
+                    String corps = "Bonjour " + client.getPrenom() + ", votre demande d'intervention du " + intervention.getDateDemande() + " a été rejeté par manque de personnel disponible. "
+                            + "Merci de recommencer ultérieurement. Veuillez nous excuser pour la gêne occasionée. ";
+
+                    Message.envoyerMail("contact@react.if", client.getMail(), "Rejet de demande d'intervention", corps);
+                    intervention.setStatut(Statut.REJET);
+                } finally {
+                    JpaUtil.ouvrirTransaction();
+                    interventionDao.creer(intervention);
+                    client.addIntervention(intervention); //ajoute l'intervention à l'historique du client
+                    clientDao.modifier(client);
+                    JpaUtil.validerTransaction();
+                    JpaUtil.fermerContextePersistance();
+                }
+            }
+        }
+
         try {
-            
+
             res = listeEmp.get(0);
             intervention.setEmp(listeEmp.get(0));
+
             intervention.setClient(client);
             String corps = "Bonjour " + res.getPrenom() + ". Merci de prendre en charge l'intervention " + intervention.toString()
                     + "demander à " + intervention.getDateDemande() + "par "
                     + intervention.getClient().getPrenom() + " " + intervention.getClient().getNom() + " " + intervention.getClient().getAddPostal() + ".";
 
             Message.envoyerNotification(res.getNumTel(), corps);
-            
-            
+
         } catch (Exception ex) {
-            
+
             String corps = "Bonjour " + client.getPrenom() + ", votre demande d'intervention du " + intervention.getDateDemande() + " a été rejeté par manque de personnel disponible. "
                     + "Merci de recommencer ultérieurement. Veuillez nous excuser pour la gêne occasionée. ";
 
@@ -104,6 +133,8 @@ public class Service {
         } finally {
             JpaUtil.ouvrirTransaction();
             interventionDao.creer(intervention);
+            client.addIntervention(intervention); //ajoute l'intervention à l'historique du client
+            clientDao.modifier(client);
             JpaUtil.validerTransaction();
             JpaUtil.fermerContextePersistance();
         }
@@ -111,23 +142,46 @@ public class Service {
         return res;
     }
 
-    public void cloturerIntervention(Intervention intervention, Statut unStatut, Date dateDeCloture, String cmt) {
+    public void cloturerIntervention(Intervention intervention, Statut unStatut, Date dateDeCloture, String cmt) throws Exception {
+
         if (intervention.getStatut() == null) {
+            JpaUtil.creerContextePersistance();
+            JpaUtil.ouvrirTransaction();
             intervention.setStatut(unStatut);
             intervention.setDateDeCloture(dateDeCloture);
             intervention.setCommentaire(cmt);
+            interventionDao.modifier(intervention);
+            JpaUtil.validerTransaction();
+            JpaUtil.fermerContextePersistance();
+
             String mess;
             switch (unStatut) {
                 case SUCCES:
-                    mess = "Succes";
+                    mess = "Bonjour " + intervention.getClient().getPrenom() + ". Votre demande d'interventin du " + intervention.getDateDemande() + " a été clôturé  à"
+                            + intervention.getDateDeCloture() + ". " + cmt;
                     Message.envoyerNotification(intervention.getClient().getNumTel(), mess);
                     break;
                 case ECHEC:
-                    mess = "Echec";
+
+                    mess = "Bonjour " + intervention.getClient().getPrenom() + ". Votre demande d'interventin du " + intervention.getDateDemande() + " a échoué." + cmt;
                     Message.envoyerNotification(intervention.getClient().getNumTel(), mess);
                     break;
             }
         }
     }
 
+    public List<Intervention> ConsulterHistoriqueDemandeIntervention(Long idClient) {
+        List<Intervention> historique = null;
+        JpaUtil.creerContextePersistance();
+        try {
+            historique = clientDao.listerDemandeIntervention(idClient);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.out);
+            historique = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return historique;
+
+    }
 }

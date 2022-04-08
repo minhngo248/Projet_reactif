@@ -17,4 +17,12 @@ public class InterventionDao {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         em.persist(i);
     }
+      public void modifier(Intervention i) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+        em.merge(i);
+    }
+     public Intervention rechercheInterventionParId(Long unId) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+        return em.find(Intervention.class, unId); // renvoie null si l'identifiant n'existe pas
+    }
 }

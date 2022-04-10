@@ -19,20 +19,42 @@ import javax.persistence.OneToMany;
 @Entity
 public class Client extends Personne {
 
-    private String addPostal;
     private String mdp;
+    private String addPostal;
     @OneToMany(mappedBy = "client")
-    private List<Intervention> historique = new ArrayList<>();
+    private List<Intervention> historique;
     private Double latitude;
     private Double longitude;
 
     public Client() {
+
     }
 
-    public Client(String nom, String prenom, String mail, String mdp, String addPostal, String numTel, Date dateNaissance) {
-        super(nom, prenom, mail, numTel, dateNaissance);
+    public Client(Genre genre, String nom, String prenom, String mail, String mdp, String addPostal, String numTel, Date dateNaissance) {
+        super(genre, nom, prenom, mail, numTel, dateNaissance);
+        this.historique = new ArrayList<>();
         this.addPostal = addPostal;
         this.mdp = mdp;
+    }
+
+    public void setHistorique(List<Intervention> historique) {
+        this.historique = historique;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
     }
 
     public String getAddPostal() {
@@ -57,10 +79,16 @@ public class Client extends Personne {
     }
 
     public List<Intervention> getHistorique() {
+        if (historique.isEmpty()) {
+            System.out.println(this.getPrenom() + " " + this.getNom() + " n'a fait aucune demande d'intervention.");
+
+        } else {
+            System.out.println("L'historique des interventions demandées par " + this.getPrenom() + " " + this.getNom() + " : ");
+        }
         return historique;
     }
-    
-    public void addIntervention(Intervention intervention){
+
+    public void addIntervention(Intervention intervention) {
         historique.add(intervention);
     }
 

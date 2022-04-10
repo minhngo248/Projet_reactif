@@ -16,27 +16,29 @@ import javax.persistence.TypedQuery;
  * @author bbbbb
  */
 public class ClientDao {
+
     public void creer(Client client) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         em.persist(client);
     }
+
     public void modifier(Client client) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         em.merge(client);
     }
-    
+
     public Client rechercheClient(Long unId) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         return em.find(Client.class, unId); // renvoie null si l'identifiant n'existe pas
     }
-    
+
     public List<Client> listerClients() {
         EntityManager em = JpaUtil.obtenirContextePersistance();
-        TypedQuery<Client> query = em.createQuery("SELECT c FROM Client c ORDER BY c.nom ASC, c.prenom ASC", 
-                                    Client.class);
+        TypedQuery<Client> query = em.createQuery("SELECT c FROM Client c ORDER BY c.nom ASC, c.prenom ASC",
+                Client.class);
         return query.getResultList();
     }
-    
+
     public Client chercherClientParMail(String unMail) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         TypedQuery<Client> query = em.createQuery("Select c From Client c where c.mail = :mail", Client.class);
@@ -47,14 +49,14 @@ public class ClientDao {
             c = uneListe.get(0);
         }
         return c;
-    }    
-    
+    }
+
     public void supprimerClient(Long unId) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         Client client = em.find(Client.class, unId);
         em.remove(client);
     }
-    
+
     public List<Intervention> listerDemandeIntervention(Long idClient) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         TypedQuery<Intervention> query;

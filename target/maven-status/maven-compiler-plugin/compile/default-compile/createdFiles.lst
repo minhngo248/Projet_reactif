@@ -6,6 +6,7 @@ fr\insalyon\dasi\metier\modele\Employe.class
 fr\insalyon\dasi\metier\modele\Livraison_.class
 fr\insalyon\dasi\metier\modele\Employe_.class
 util\Saisie.class
+fr\insalyon\dasi\metier\modele\Animal_.class
 fr\insalyon\dasi\metier\modele\Personne.class
 fr\insalyon\dasi\metier\modele\Agence.class
 fr\insalyon\dasi\metier\modele\Incident_.class
@@ -15,6 +16,7 @@ fr\insalyon\dasi\metier\modele\Client_.class
 fr\insalyon\dasi\metier\modele\Intervention_.class
 fr\insalyon\dasi\metier\modele\Agence_.class
 util\GeoNetApi.class
+fr\insalyon\dasi\metier\modele\Animal.class
 fr\insalyon\dasi\metier\service\Service$1.class
 fr\insalyon\dasi\metier\modele\Incident.class
 fr\insalyon\dasi\metier\modele\Statut.class
@@ -23,4 +25,6 @@ util\Message.class
 fr\insalyon\dasi\metier\modele\Client.class
 fr\insalyon\dasi\metier\modele\Personne_.class
 fr\insalyon\dasi\dao\ClientDao.class
+fr\insalyon\dasi\metier\modele\Genre.class
 fr\insalyon\dasi\dao\JpaUtil$1.class
+fr\insalyon\dasi\metier\modele\Dispo.class

@@ -13,15 +13,18 @@ import javax.persistence.EntityManager;
  * @author bbbbb
  */
 public class InterventionDao {
-     public void creer(Intervention i) {
+
+    public void creer(Intervention i) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         em.persist(i);
     }
-      public void modifier(Intervention i) {
+
+    public void modifier(Intervention i) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         em.merge(i);
     }
-     public Intervention rechercheInterventionParId(Long unId) {
+
+    public Intervention rechercheInterventionParId(Long unId) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
         return em.find(Intervention.class, unId); // renvoie null si l'identifiant n'existe pas
     }

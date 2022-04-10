@@ -122,7 +122,7 @@ public class GeoNetApi {
     }
 
     public static boolean hasInvalidApiKey() {
-        return MA_CLE_GOOGLE_API.startsWith("XXXXXX");
+        return MA_CLE_GOOGLE_API.startsWith("AIzaSyAklw96N9rLd93ubr-F04CN7qi2ryKayAc");
     }
 
 }

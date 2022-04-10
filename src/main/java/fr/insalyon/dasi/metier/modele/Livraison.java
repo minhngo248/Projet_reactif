@@ -14,10 +14,27 @@ import javax.persistence.Entity;
  */
 @Entity
 public class Livraison extends Intervention {
+
     private String objet;
     private String entreprise;
 
     public Livraison() {
+    }
+
+    public void setObjet(String objet) {
+        this.objet = objet;
+    }
+
+    public void setEntreprise(String entreprise) {
+        this.entreprise = entreprise;
+    }
+
+    public String getObjet() {
+        return objet;
+    }
+
+    public String getEntreprise() {
+        return entreprise;
     }
 
     public Livraison(String objet, String entreprise, String description, Date dateDemande, Client client) {
@@ -25,5 +42,9 @@ public class Livraison extends Intervention {
         this.objet = objet;
         this.entreprise = entreprise;
     }
-    
+
+    public String obtenirTypeIntervention() {
+        return "Livraison";
+    }
+
 }

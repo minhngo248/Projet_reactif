@@ -9,6 +9,6 @@ package fr.insalyon.dasi.metier.modele;
  *
  * @author lbezie
  */
-public enum Dispo {
-    OCCUPE, LIBRE
+public enum Genre {
+    MME, M
 }

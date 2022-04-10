@@ -5,14 +5,20 @@
  */
 package fr.insalyon.dasi.metier.modele;
 
-import java.time.LocalTime;
+import com.google.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import static javax.persistence.EnumType.STRING;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import util.GeoNetApi;
 
 /**
  *
@@ -22,35 +28,58 @@ import javax.persistence.Temporal;
 public class Employe extends Personne {
 
     private String mdp;
-    
+
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date horaireDebut;
-    
+
     @Temporal(javax.persistence.TemporalType.TIME)
     private Date horaireFin;
-    
-    @ManyToOne
+
+    @ManyToOne(cascade={CascadeType.PERSIST},
+            fetch=FetchType.EAGER)
     private Agence agence;
 
     @OneToMany(mappedBy = "emp")
-    private List<Intervention> listeIntervention = new ArrayList<>();
-    
+    private List<Intervention> listeIntervention;
+
+    @Enumerated(STRING)
     private Dispo dispo;
+
+    private Double distanceCumule;
+
+    @OneToOne(fetch=FetchType.EAGER)
+    private Intervention interventionEnCours;
 
     public Employe() {
     }
 
-    public Employe(String mdp, Date horaireDebut, Date horaireFin, Agence agence, String nom, String prenom, String mail, String numTel, Date dateNaissance) {
-        super(nom, prenom, mail, numTel, dateNaissance);
+    public Employe(Genre genre, String nom, String prenom, String mail, String mdp, String numTel, Date dateNaissance, Date horaireDebut, Date horaireFin, Agence agence) {
+        super(genre, nom, prenom, mail, numTel, dateNaissance);
         this.mdp = mdp;
         this.horaireDebut = horaireDebut;
         this.horaireFin = horaireFin;
         this.agence = agence;
-        this.dispo= Dispo.LIBRE;
+        this.listeIntervention = new ArrayList<>();
+        this.dispo = Dispo.LIBRE;
+        this.distanceCumule = 0.0;
+        this.interventionEnCours = null;
     }
 
     public Dispo getDispo() {
         return dispo;
+    }
+
+    public Intervention getInterventionEnCours() {
+
+        return interventionEnCours;
+    }
+
+    public void setDistanceCumule(double distanceCumule) {
+        this.distanceCumule = distanceCumule;
+    }
+
+    public void setInterventionEnCours(Intervention interventionEnCours) {
+        this.interventionEnCours = interventionEnCours;
     }
 
     public void setDispo(Dispo dispo) {
@@ -95,6 +124,25 @@ public class Employe extends Personne {
 
     public void setListeIntervention(List<Intervention> listeIntervention) {
         this.listeIntervention = listeIntervention;
+    }
+
+    public double getLatitude() {
+        return this.agence.getLatitude();
+    }
+
+    public double getLongitude() {
+        return this.agence.getLongitude();
+    }
+
+    public void addIntervention(Intervention intervention) {
+        listeIntervention.add(intervention);
+        LatLng latLngEmp = new LatLng(this.getLatitude(), this.getLongitude());
+        LatLng latLngClient = new LatLng(intervention.getClient().getLatitude(), intervention.getClient().getLongitude());
+        this.distanceCumule = this.distanceCumule + GeoNetApi.getTripDistanceByCarInKm(latLngEmp, latLngClient);
+    }
+
+    public double getDistanceCumule() {
+        return distanceCumule;
     }
 
 }

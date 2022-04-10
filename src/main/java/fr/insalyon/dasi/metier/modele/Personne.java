@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import static javax.persistence.EnumType.STRING;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,12 +23,16 @@ import javax.persistence.Temporal;
  * @author lbezie
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Personne implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private  Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Enumerated(STRING)
+    private Genre genre;
+    
     private String nom;
     private String prenom;
     @Column(unique = true)
@@ -38,8 +44,8 @@ public class Personne implements Serializable {
     public Personne() {
     }
 
-    public Personne( String nom, String prenom, String mail, String numTel, Date dateNaissance) {
-     
+    public Personne(Genre genre, String nom, String prenom, String mail, String numTel, Date dateNaissance) {
+        this.genre = genre;
         this.nom = nom;
         this.prenom = prenom;
         this.mail = mail;
@@ -57,6 +63,14 @@ public class Personne implements Serializable {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
+
+    public Genre getGenre() {
+        return genre;
     }
 
     public void setNumTel(String numTel) {

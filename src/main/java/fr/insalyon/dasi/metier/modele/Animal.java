@@ -13,17 +13,28 @@ import javax.persistence.Entity;
  * @author lbezie
  */
 @Entity
-public class Incident extends Intervention {
+public class Animal extends Intervention {
 
-    public Incident() {
+    private String animal;
+
+    public Animal() {
     }
 
-    public Incident(String description, Date dateDemande, Client client) {
+    public void setAnimal(String animal) {
+        this.animal = animal;
+    }
+
+    public String getAnimal() {
+        return animal;
+    }
+
+    public Animal(String animal, String description, Date dateDemande, Client client) {
         super(description, dateDemande, client);
+        this.animal = animal;
     }
 
     @Override
     public String obtenirTypeIntervention() {
-        return "Incident";
+        return "Animal";
     }
 }

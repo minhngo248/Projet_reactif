@@ -10,9 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import static javax.persistence.EnumType.STRING;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -42,8 +41,8 @@ public class Employe extends Personne {
     @OneToMany(mappedBy = "emp")
     private List<Intervention> listeIntervention;
 
-    @Enumerated(STRING)
-    private Dispo dispo;
+    @Column(columnDefinition="character varying (100) not null")
+    private boolean dispo;
 
     private Double distanceCumule;
 
@@ -60,12 +59,12 @@ public class Employe extends Personne {
         this.horaireFin = horaireFin;
         this.agence = agence;
         this.listeIntervention = new ArrayList<>();
-        this.dispo = Dispo.LIBRE;
+        this.dispo = true;
         this.distanceCumule = 0.0;
         this.interventionEnCours = null;
     }
 
-    public Dispo getDispo() {
+    public boolean getDispo() {
         return dispo;
     }
 
@@ -82,7 +81,7 @@ public class Employe extends Personne {
         this.interventionEnCours = interventionEnCours;
     }
 
-    public void setDispo(Dispo dispo) {
+    public void setDispo(boolean dispo) {
         this.dispo = dispo;
     }
 

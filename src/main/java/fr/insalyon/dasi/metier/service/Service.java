@@ -13,7 +13,6 @@ import fr.insalyon.dasi.dao.InterventionDao;
 import fr.insalyon.dasi.dao.JpaUtil;
 import fr.insalyon.dasi.metier.modele.Agence;
 import fr.insalyon.dasi.metier.modele.Client;
-import fr.insalyon.dasi.metier.modele.Dispo;
 import fr.insalyon.dasi.metier.modele.Employe;
 import fr.insalyon.dasi.metier.modele.Genre;
 import fr.insalyon.dasi.metier.modele.Intervention;
@@ -226,7 +225,7 @@ public class Service {
 
         try {
             JpaUtil.ouvrirTransaction();
-            res.setDispo(Dispo.OCCUPE);
+            res.setDispo(false);
 
             intervention.setEmp(res);
 
@@ -266,7 +265,7 @@ public class Service {
             intervention.setDateDeCloture(dateDeCloture);
             intervention.setCommentaire(cmt);
 
-            intervention.getEmp().setDispo(Dispo.LIBRE); //employe devient libre
+            intervention.getEmp().setDispo(true); //employe devient libre
             intervention.getEmp().addIntervention(intervention); //ajout de l'intervention à l'historique de l'intervention de l'employe
             intervention.getEmp().setInterventionEnCours(null);
 

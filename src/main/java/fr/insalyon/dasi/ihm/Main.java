@@ -95,11 +95,11 @@ public class Main {
 
 
         /*Intervention en cours d'un employé*/
-        Long unIdEmp = Long.valueOf(6);
-        testerConsulterInterventionEnCours(unIdEmp);
-
-        unIdEmp = Long.valueOf(8);
-        testerConsulterInterventionEnCours(unIdEmp);
+//        Long unIdEmp = Long.valueOf(6);
+//        testerConsulterInterventionEnCours(unIdEmp);
+//
+//        unIdEmp = Long.valueOf(8);
+//        testerConsulterInterventionEnCours(unIdEmp);
         JpaUtil.destroy();
     }
 

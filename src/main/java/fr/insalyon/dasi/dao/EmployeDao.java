@@ -9,7 +9,6 @@ import fr.insalyon.dasi.metier.modele.Employe;
 import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import fr.insalyon.dasi.metier.modele.Dispo;
 
 /**
  *
@@ -32,7 +31,7 @@ public class EmployeDao {
         TypedQuery<Employe> query = em.createQuery("Select e From Employe e where e.horaireDebut <= :heureDemande and e.horaireFin > :heureDemande and e.dispo = :dispo",
                 Employe.class);
         query.setParameter("heureDemande", heureDemande);
-        query.setParameter("dispo", Dispo.LIBRE);
+        query.setParameter("dispo", true);
         //Selectionner une liste d'employes qui sont libres et dans leurs horaires de travail 
         List<Employe> resultat = query.getResultList();
         return resultat;
